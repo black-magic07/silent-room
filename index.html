@@ -6,25 +6,18 @@
   <title>Silent Room</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- CryptoJS for AES-256 Client-side Encryption -->
+  <!-- CryptoJS for AES-256 Encryption -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
   <style>
-    /* Custom scrollbar */
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-    
-    /* Audio player dark styling */
-    audio::-webkit-media-controls-panel {
-      background-color: #0f172a;
-    }
+    audio::-webkit-media-controls-panel { background-color: #0f172a; }
     audio::-webkit-media-controls-current-time-display,
-    audio::-webkit-media-controls-time-remaining-display {
-      color: #94a3b8;
-    }
+    audio::-webkit-media-controls-time-remaining-display { color: #94a3b8; }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-2 sm:p-4 font-sans select-none">
@@ -49,25 +42,39 @@
   </div>
 
   <!-- Chat Screen -->
-  <div id="chat-card" class="bg-slate-900 rounded-2xl shadow-2xl w-full max-w-lg border border-slate-800 flex flex-col h-[95vh] sm:h-[90vh] hidden overflow-hidden">
+  <div id="chat-card" class="bg-slate-900 rounded-2xl shadow-2xl w-full max-w-lg border border-slate-800 flex flex-col h-[95vh] sm:h-[90vh] hidden overflow-hidden relative">
+    
     <!-- Header -->
-    <div class="p-3.5 sm:p-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/90 backdrop-blur">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold">
+    <div class="p-3 sm:p-3.5 border-b border-slate-800 flex justify-between items-center bg-slate-900/90 backdrop-blur">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-sm">
           SR
         </div>
         <div>
-          <div class="font-bold text-sm sm:text-base flex items-center gap-2">
+          <div class="font-bold text-xs sm:text-sm flex items-center gap-1.5">
             <span>Silent Room</span>
-            <span id="role-badge" class="text-[10px] px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 font-mono border border-indigo-500/30"></span>
+            <span id="role-badge" class="text-[9px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-mono border border-indigo-500/30"></span>
           </div>
-          <div class="text-[11px] text-emerald-400 flex items-center gap-1">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-            Voice • AES-256 • 1h Auto-Delete
+          <!-- Peer Status Indicator with Last Seen -->
+          <div id="peer-status" class="text-[10px] text-slate-400 flex items-center gap-1 mt-0.5 font-medium">
+            <span id="peer-dot" class="w-1.5 h-1.5 rounded-full bg-slate-600"></span>
+            <span id="peer-status-text">Checking status...</span>
           </div>
         </div>
       </div>
-      <button onclick="logout()" class="text-xs bg-slate-800 hover:bg-rose-950 hover:text-rose-300 text-slate-400 px-3 py-1.5 rounded-lg border border-slate-700/50 transition">Exit</button>
+
+      <!-- Action Buttons: Audio Call, Video Call, Exit -->
+      <div class="flex items-center gap-1 sm:gap-1.5">
+        <button onclick="initiateCall('audio')" title="Voice Call" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-emerald-400 border border-slate-700 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+        </button>
+
+        <button onclick="initiateCall('video')" title="Video Call" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-indigo-400 border border-slate-700 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+        </button>
+
+        <button onclick="logout()" class="text-xs bg-slate-800 hover:bg-rose-950 hover:text-rose-300 text-slate-400 px-2.5 py-1.5 rounded-lg border border-slate-700/50 transition">Exit</button>
+      </div>
     </div>
 
     <!-- Messages Container -->
@@ -100,38 +107,79 @@
 
     <!-- Message Input Form -->
     <form id="chat-input-form" onsubmit="sendMessage(event)" class="p-2 sm:p-3 border-t border-slate-800 flex items-center gap-1.5 sm:gap-2 bg-slate-900">
-      <!-- File Attach Button -->
       <label class="cursor-pointer bg-slate-800 hover:bg-slate-700 p-2 sm:p-2.5 rounded-xl border border-slate-700/60 transition flex items-center justify-center text-slate-300 hover:text-white shrink-0" title="Attach image or video">
         <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
         <input id="file-input" type="file" accept="image/*,video/*" class="hidden" onchange="handleFileSelect(event)">
       </label>
 
-      <!-- Voice Record Button -->
       <button type="button" onclick="startVoiceRecording()" class="bg-slate-800 hover:bg-slate-700 p-2 sm:p-2.5 rounded-xl border border-slate-700/60 transition flex items-center justify-center text-slate-300 hover:text-rose-400 shrink-0" title="Record voice message">
         <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
       </button>
 
-      <!-- Text Input -->
       <input id="msg-input" type="text" placeholder="Type a message..." autocomplete="off" class="min-w-0 flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 sm:px-4 py-2 text-xs sm:text-sm focus:outline-none focus:border-indigo-500 text-slate-100 placeholder-slate-500">
       
-      <!-- Send Button (Always Visible) -->
       <button type="submit" id="send-btn" class="bg-indigo-600 hover:bg-indigo-500 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition shrink-0 shadow-md shadow-indigo-600/20 active:scale-95 flex items-center justify-center gap-1">
         <span id="send-text">Send</span>
         <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 rotate-45 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
         <span id="send-spinner" class="hidden animate-spin h-3.5 w-3.5 border-2 border-white border-t-transparent rounded-full"></span>
       </button>
     </form>
+
+    <!-- Call Overlay Screen -->
+    <div id="call-modal" class="absolute inset-0 bg-slate-950/95 z-50 hidden flex flex-col items-center justify-center p-4">
+      <div id="incoming-call-box" class="hidden text-center space-y-4">
+        <div class="w-16 h-16 rounded-full bg-indigo-600/20 border border-indigo-500 text-indigo-400 mx-auto flex items-center justify-center animate-bounce">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+        </div>
+        <div>
+          <h3 id="incoming-caller-title" class="text-lg font-bold text-white">Incoming Call...</h3>
+          <p id="incoming-call-type" class="text-xs text-slate-400 mt-0.5">Secure Peer-to-Peer</p>
+        </div>
+        <div class="flex gap-4 justify-center pt-2">
+          <button onclick="rejectCall()" class="bg-rose-600 hover:bg-rose-500 px-5 py-2.5 rounded-xl font-semibold text-xs transition">Decline</button>
+          <button onclick="acceptCall()" class="bg-emerald-600 hover:bg-emerald-500 px-5 py-2.5 rounded-xl font-semibold text-xs transition shadow-lg shadow-emerald-600/30">Accept</button>
+        </div>
+      </div>
+
+      <!-- Active Call Interface -->
+      <div id="active-call-box" class="w-full h-full flex flex-col items-center justify-between hidden">
+        <div class="text-center pt-3">
+          <span id="call-status-label" class="text-xs font-mono text-emerald-400 animate-pulse">Connecting...</span>
+        </div>
+        
+        <div class="relative w-full flex-1 my-3 flex items-center justify-center overflow-hidden rounded-2xl bg-slate-900 border border-slate-800">
+          <video id="remote-video" autoplay playsinline class="w-full h-full object-cover"></video>
+          <video id="local-video" autoplay playsinline muted class="absolute bottom-3 right-3 w-24 h-32 object-cover rounded-xl border border-slate-700 shadow-xl bg-slate-950"></video>
+          <div id="audio-call-placeholder" class="hidden flex flex-col items-center gap-3">
+            <div class="w-20 h-20 rounded-full bg-indigo-600/20 border border-indigo-500 flex items-center justify-center text-indigo-400">
+              <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+            </div>
+            <p class="text-xs text-slate-400 font-mono">End-to-End Encrypted Voice</p>
+          </div>
+        </div>
+
+        <div class="pb-4">
+          <button onclick="endCall()" class="bg-rose-600 hover:bg-rose-500 text-white px-6 py-2.5 rounded-xl text-xs font-semibold shadow-lg shadow-rose-600/30 transition flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M5 3a2 2 0 00-2 2v1c0 8.284 6.716 15 15 15h1a2 2 0 002-2v-3.28a1 1 0 00-.684-.948l-4.493-1.498a1 1 0 00-1.21.502l-1.13 2.257a11.042 11.042 0 01-5.516-5.517l2.257-1.128a1 1 0 00.502-1.21L9.228 3.683A1 1 0 008.279 3H5z"></path></svg>
+            End Call
+          </button>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <script>
-    // -------------------------------------------------------------
-    // Configuration
-    // -------------------------------------------------------------
+    // =============================================================
+    // Configuration & Settings
+    // =============================================================
     const USER1_PASSWORD = "CD&852"; // User 1
     const USER2_PASSWORD = "GF$987"; // User 2
     const ENCRYPTION_SECRET = "SilentRoom_SecretKey_2026_SecureAES";
-    const MESSAGE_EXPIRE_HOURS = 1;
-    // -------------------------------------------------------------
+
+    // Change this value to adjust expiration duration (e.g., 2, 12, 24 hours)
+    const MESSAGE_EXPIRE_HOURS = 1; 
+    // =============================================================
 
     const firebaseConfig = {
       apiKey: "AIzaSyDHq8YSDNWeyxRISG043Yj3DsO4rJXBqzc",
@@ -146,6 +194,10 @@
     const db = firebase.firestore();
 
     let currentUserRole = null;
+    let peerUserRole = null;
+    let isPeerOnline = false;
+    let presenceHeartbeat = null;
+
     let selectedMedia = null;
     let isCompressing = false;
     const FIXED_ROOM_ID = "silent_room_global";
@@ -155,6 +207,12 @@
     let recordingTimerInterval = null;
     let recordingSeconds = 0;
     let isRecordingCancelled = false;
+
+    let peerConnection = null;
+    let localStream = null;
+    let callType = 'audio';
+    let currentCallData = null;
+    const rtcConfig = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
 
     function encryptData(text) {
       if (!text) return "";
@@ -178,8 +236,10 @@
 
       if (pass === USER1_PASSWORD) {
         currentUserRole = 'User 1';
+        peerUserRole = 'User 2';
       } else if (pass === USER2_PASSWORD) {
         currentUserRole = 'User 2';
+        peerUserRole = 'User 1';
       } else {
         errorMsg.classList.remove('hidden');
         return;
@@ -190,12 +250,256 @@
       document.getElementById('role-badge').innerText = currentUserRole;
 
       startChat();
+      setupPresence();
+      listenForIncomingCalls();
     }
 
     function logout() {
+      if (currentUserRole) {
+        db.collection('rooms').doc(FIXED_ROOM_ID).collection('presence').doc(currentUserRole).set({
+          online: false,
+          lastSeen: Date.now()
+        }).catch(() => {});
+      }
       location.reload();
     }
 
+    // ---------------- Presence & Last Seen System ----------------
+    function setupPresence() {
+      const myPresenceRef = db.collection('rooms').doc(FIXED_ROOM_ID).collection('presence').doc(currentUserRole);
+      
+      const updatePresence = () => {
+        myPresenceRef.set({ online: true, lastSeen: Date.now() });
+      };
+
+      updatePresence();
+      presenceHeartbeat = setInterval(updatePresence, 5000);
+
+      window.addEventListener('beforeunload', () => {
+        myPresenceRef.set({ online: false, lastSeen: Date.now() });
+      });
+
+      // Listen to peer's presence & last seen
+      db.collection('rooms').doc(FIXED_ROOM_ID).collection('presence').doc(peerUserRole)
+        .onSnapshot(doc => {
+          const data = doc.data();
+          const dot = document.getElementById('peer-dot');
+          const text = document.getElementById('peer-status-text');
+
+          if (data && data.online && (Date.now() - data.lastSeen < 12000)) {
+            isPeerOnline = true;
+            dot.className = "w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse";
+            text.className = "text-emerald-400 font-semibold";
+            text.innerText = "Online";
+          } else {
+            isPeerOnline = false;
+            dot.className = "w-1.5 h-1.5 rounded-full bg-slate-600";
+            text.className = "text-slate-400 font-normal";
+            
+            if (data && data.lastSeen) {
+              text.innerText = `Last seen at ${formatTime(data.lastSeen)}`;
+            } else {
+              text.innerText = "Offline";
+            }
+          }
+        });
+    }
+
+    // ---------------- Peer-to-Peer Calling ----------------
+    async function initiateCall(type) {
+      if (!isPeerOnline) {
+        alert(`${peerUserRole} is currently offline. Calling is disabled when peer is not active in room.`);
+        return;
+      }
+
+      callType = type;
+      try {
+        localStream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+          video: type === 'video'
+        });
+
+        setupCallUI(type, true);
+
+        peerConnection = new RTCPeerConnection(rtcConfig);
+        localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+
+        peerConnection.ontrack = (event) => {
+          document.getElementById('remote-video').srcObject = event.streams[0];
+          document.getElementById('call-status-label').innerText = "Connected (Encrypted)";
+        };
+
+        const callDoc = db.collection('rooms').doc(FIXED_ROOM_ID).collection('calls').doc('active');
+        const offerCandidates = callDoc.collection('offerCandidates');
+        const answerCandidates = callDoc.collection('answerCandidates');
+
+        peerConnection.onicecandidate = (event) => {
+          if (event.candidate) offerCandidates.add(event.candidate.toJSON());
+        };
+
+        const offerDescription = await peerConnection.createOffer();
+        await peerConnection.setLocalDescription(offerDescription);
+
+        await callDoc.set({
+          caller: currentUserRole,
+          receiver: peerUserRole,
+          type: type,
+          status: 'calling',
+          offer: { sdp: offerDescription.sdp, type: offerDescription.type },
+          timestamp: Date.now()
+        });
+
+        callDoc.onSnapshot(snapshot => {
+          const data = snapshot.data();
+          if (data && data.status === 'rejected') {
+            alert("Call was declined.");
+            endCall();
+          } else if (data && !peerConnection.currentRemoteDescription && data.answer) {
+            const answerDescription = new RTCSessionDescription(data.answer);
+            peerConnection.setRemoteDescription(answerDescription);
+          } else if (!data) {
+            endCallCleanup();
+          }
+        });
+
+        answerCandidates.onSnapshot(snapshot => {
+          snapshot.docChanges().forEach(change => {
+            if (change.type === 'added') {
+              peerConnection.addIceCandidate(new RTCIceCandidate(change.doc.data()));
+            }
+          });
+        });
+
+      } catch (err) {
+        alert("Camera or Microphone permission required for calls.");
+        endCall();
+      }
+    }
+
+    function listenForIncomingCalls() {
+      const callDoc = db.collection('rooms').doc(FIXED_ROOM_ID).collection('calls').doc('active');
+
+      callDoc.onSnapshot(snapshot => {
+        const data = snapshot.data();
+        if (data && data.receiver === currentUserRole && data.status === 'calling') {
+          if (Date.now() - data.timestamp < 15000) {
+            currentCallData = data;
+            document.getElementById('call-modal').classList.remove('hidden');
+            document.getElementById('incoming-call-box').classList.remove('hidden');
+            document.getElementById('active-call-box').classList.add('hidden');
+            document.getElementById('incoming-caller-title').innerText = `${data.caller} Calling...`;
+            document.getElementById('incoming-call-type').innerText = `${data.type.toUpperCase()} Call Request`;
+          }
+        } else if (!data && peerConnection) {
+          endCallCleanup();
+        }
+      });
+    }
+
+    async function acceptCall() {
+      if (!currentCallData) return;
+      callType = currentCallData.type;
+
+      try {
+        localStream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+          video: callType === 'video'
+        });
+
+        setupCallUI(callType, false);
+
+        peerConnection = new RTCPeerConnection(rtcConfig);
+        localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+
+        peerConnection.ontrack = (event) => {
+          document.getElementById('remote-video').srcObject = event.streams[0];
+          document.getElementById('call-status-label').innerText = "Connected (Encrypted)";
+        };
+
+        const callDoc = db.collection('rooms').doc(FIXED_ROOM_ID).collection('calls').doc('active');
+        const answerCandidates = callDoc.collection('answerCandidates');
+        const offerCandidates = callDoc.collection('offerCandidates');
+
+        peerConnection.onicecandidate = (event) => {
+          if (event.candidate) answerCandidates.add(event.candidate.toJSON());
+        };
+
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(currentCallData.offer));
+        const answerDescription = await peerConnection.createAnswer();
+        await peerConnection.setLocalDescription(answerDescription);
+
+        await callDoc.update({
+          status: 'connected',
+          answer: { type: answerDescription.type, sdp: answerDescription.sdp }
+        });
+
+        offerCandidates.onSnapshot(snapshot => {
+          snapshot.docChanges().forEach(change => {
+            if (change.type === 'added') {
+              peerConnection.addIceCandidate(new RTCIceCandidate(change.doc.data()));
+            }
+          });
+        });
+
+      } catch (err) {
+        alert("Camera or Microphone permission denied.");
+        rejectCall();
+      }
+    }
+
+    async function rejectCall() {
+      const callDoc = db.collection('rooms').doc(FIXED_ROOM_ID).collection('calls').doc('active');
+      await callDoc.update({ status: 'rejected' }).catch(() => {});
+      setTimeout(() => callDoc.delete().catch(() => {}), 1000);
+      endCallCleanup();
+    }
+
+    async function endCall() {
+      const callDoc = db.collection('rooms').doc(FIXED_ROOM_ID).collection('calls').doc('active');
+      await callDoc.delete().catch(() => {});
+      endCallCleanup();
+    }
+
+    function endCallCleanup() {
+      if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+        localStream = null;
+      }
+      if (peerConnection) {
+        peerConnection.close();
+        peerConnection = null;
+      }
+      currentCallData = null;
+      document.getElementById('call-modal').classList.add('hidden');
+      document.getElementById('incoming-call-box').classList.add('hidden');
+      document.getElementById('active-call-box').classList.add('hidden');
+      document.getElementById('remote-video').srcObject = null;
+      document.getElementById('local-video').srcObject = null;
+    }
+
+    function setupCallUI(type, isCaller) {
+      document.getElementById('call-modal').classList.remove('hidden');
+      document.getElementById('incoming-call-box').classList.add('hidden');
+      document.getElementById('active-call-box').classList.remove('hidden');
+      document.getElementById('call-status-label').innerText = isCaller ? "Ringing peer..." : "Connecting...";
+
+      const placeholder = document.getElementById('audio-call-placeholder');
+      const localVid = document.getElementById('local-video');
+      const remoteVid = document.getElementById('remote-video');
+
+      if (type === 'video') {
+        placeholder.classList.add('hidden');
+        localVid.classList.remove('hidden');
+        remoteVid.classList.remove('hidden');
+        localVid.srcObject = localStream;
+      } else {
+        placeholder.classList.remove('hidden');
+        localVid.classList.add('hidden');
+        remoteVid.classList.add('hidden');
+      }
+    }
+
+    // ---------------- Messaging System ----------------
     function compressImage(file, maxWidth = 1000, maxHeight = 1000, quality = 0.65) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -206,7 +510,6 @@
           img.onload = () => {
             let width = img.width;
             let height = img.height;
-
             if (width > height) {
               if (width > maxWidth) {
                 height = Math.round((height * maxWidth) / width);
@@ -218,15 +521,12 @@
                 height = maxHeight;
               }
             }
-
             const canvas = document.createElement('canvas');
             canvas.width = width;
             canvas.height = height;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
-
-            const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
-            resolve(compressedBase64);
+            resolve(canvas.toDataURL('image/jpeg', quality));
           };
           img.onerror = reject;
         };
@@ -261,12 +561,7 @@
         if (isImage) {
           previewElement.innerHTML = `<span class="text-xs bg-indigo-900 text-indigo-300 px-1.5 py-0.5 rounded">🖼️ Optimizing</span>`;
           const compressedData = await compressImage(file);
-          
-          selectedMedia = {
-            type: 'image',
-            data: compressedData,
-            name: file.name
-          };
+          selectedMedia = { type: 'image', data: compressedData, name: file.name };
           previewElement.innerHTML = `<img src="${compressedData}" class="w-9 h-9 object-cover rounded-lg border border-slate-700">`;
           previewStatus.innerText = "✓ Ready";
         } else if (isVideo) {
@@ -277,18 +572,14 @@
           }
           const reader = new FileReader();
           reader.onload = function(evt) {
-            selectedMedia = {
-              type: 'video',
-              data: evt.target.result,
-              name: file.name
-            };
+            selectedMedia = { type: 'video', data: evt.target.result, name: file.name };
             previewElement.innerHTML = `<span class="text-xs bg-indigo-900 text-indigo-300 px-1.5 py-0.5 rounded">🎬 Video</span>`;
             previewStatus.innerText = "✓ Ready";
           };
           reader.readAsDataURL(file);
         }
       } catch (err) {
-        alert("Error processing file. Please try again.");
+        alert("Error processing file.");
         clearMediaSelection();
       } finally {
         isCompressing = false;
@@ -309,9 +600,7 @@
 
         mediaRecorder = new MediaRecorder(stream);
         mediaRecorder.ondataavailable = (e) => {
-          if (e.data.size > 0) {
-            audioChunks.push(e.data);
-          }
+          if (e.data.size > 0) audioChunks.push(e.data);
         };
 
         mediaRecorder.onstop = async () => {
@@ -326,12 +615,7 @@
             }
             const reader = new FileReader();
             reader.onloadend = async () => {
-              const base64Audio = reader.result;
-              await sendDirectMessage({
-                text: "",
-                mediaData: base64Audio,
-                mediaType: "audio"
-              });
+              await sendDirectMessage({ text: "", mediaData: reader.result, mediaType: "audio" });
             };
             reader.readAsDataURL(audioBlob);
           }
@@ -348,14 +632,11 @@
           const mins = String(Math.floor(recordingSeconds / 60)).padStart(2, '0');
           const secs = String(recordingSeconds % 60).padStart(2, '0');
           document.getElementById('recording-timer').innerText = `${mins}:${secs}`;
-          
-          if (recordingSeconds >= 60) {
-            stopAndSendVoiceRecording();
-          }
+          if (recordingSeconds >= 60) stopAndSendVoiceRecording();
         }, 1000);
 
       } catch (err) {
-        alert("Microphone access denied or not supported on this browser.");
+        alert("Microphone permission denied.");
       }
     }
 
@@ -419,24 +700,16 @@
             } else if (msg.mediaType === 'video' && decryptedMedia) {
               mediaHtml = `<video controls class="rounded-xl max-h-64 mb-1.5 w-full bg-black"><source src="${decryptedMedia}"></video>`;
             } else if (msg.mediaType === 'audio' && decryptedMedia) {
-              mediaHtml = `
-                <div class="flex items-center gap-2 py-1">
-                  <audio controls class="h-9 w-52 sm:w-60">
-                    <source src="${decryptedMedia}" type="audio/webm">
-                  </audio>
-                </div>
-              `;
+              mediaHtml = `<div class="flex items-center gap-2 py-1"><audio controls class="h-9 w-52 sm:w-60"><source src="${decryptedMedia}" type="audio/webm"></audio></div>`;
             }
 
             const textHtml = decryptedText ? `<div class="leading-relaxed">${escapeHtml(decryptedText)}</div>` : '';
 
             let statusIndicator = '';
             if (isMe) {
-              if (msg.read) {
-                statusIndicator = `<span class="text-sky-300 font-bold ml-1" title="Seen">✓✓</span>`;
-              } else {
-                statusIndicator = `<span class="text-slate-400 font-semibold ml-1" title="Delivered">✓</span>`;
-              }
+              statusIndicator = msg.read 
+                ? `<span class="text-sky-300 font-bold ml-1" title="Seen">✓✓</span>` 
+                : `<span class="text-slate-400 font-semibold ml-1" title="Delivered">✓</span>`;
             }
 
             bubble.innerHTML = `
@@ -489,14 +762,10 @@
 
     async function sendMessage(e) {
       e.preventDefault();
-      if (isCompressing) {
-        alert("Media is still processing, please wait a moment...");
-        return;
-      }
+      if (isCompressing) return;
 
       const input = document.getElementById('msg-input');
       const text = input.value.trim();
-
       if (!text && !selectedMedia) return;
 
       const mediaData = selectedMedia ? selectedMedia.data : "";

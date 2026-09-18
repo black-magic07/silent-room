@@ -63,12 +63,10 @@
       </div>
 
       <div class="flex items-center gap-1.5 shrink-0">
-        <!-- Voice Call Button -->
         <button onclick="initiateCall('audio')" title="Voice Call" class="w-8 h-8 rounded-lg bg-emerald-950/60 hover:bg-emerald-900 text-emerald-400 border border-emerald-500/40 flex items-center justify-center shadow transition active:scale-95">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a11.042 11.042 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
         </button>
 
-        <!-- Video Call Button -->
         <button onclick="initiateCall('video')" title="Video Call" class="w-8 h-8 rounded-lg bg-indigo-950/60 hover:bg-indigo-900 text-indigo-300 border border-indigo-500/40 flex items-center justify-center shadow transition active:scale-95">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
         </button>
@@ -107,20 +105,21 @@
       </div>
     </div>
 
-    <!-- Message Input Form -->
-    <form id="chat-input-form" onsubmit="sendMessage(event)" class="p-2 sm:p-3 border-t border-slate-800 flex items-center gap-1.5 sm:gap-2 bg-slate-900">
-      <label class="cursor-pointer bg-slate-800 hover:bg-slate-700 p-2 sm:p-2.5 rounded-xl border border-slate-700/60 transition flex items-center justify-center text-slate-300 hover:text-white shrink-0" title="Attach image or video">
+    <!-- Message Input Form with Auto-Wrapping Textarea -->
+    <form id="chat-input-form" onsubmit="sendMessage(event)" class="p-2 sm:p-3 border-t border-slate-800 flex items-end gap-1.5 sm:gap-2 bg-slate-900">
+      <label class="cursor-pointer bg-slate-800 hover:bg-slate-700 p-2 sm:p-2.5 rounded-xl border border-slate-700/60 transition flex items-center justify-center text-slate-300 hover:text-white shrink-0 mb-0.5" title="Attach image or video">
         <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
         <input id="file-input" type="file" accept="image/*,video/*" class="hidden" onchange="handleFileSelect(event)">
       </label>
 
-      <button type="button" onclick="startVoiceRecording()" class="bg-slate-800 hover:bg-slate-700 p-2 sm:p-2.5 rounded-xl border border-slate-700/60 transition flex items-center justify-center text-slate-300 hover:text-rose-400 shrink-0" title="Record voice message">
+      <button type="button" onclick="startVoiceRecording()" class="bg-slate-800 hover:bg-slate-700 p-2 sm:p-2.5 rounded-xl border border-slate-700/60 transition flex items-center justify-center text-slate-300 hover:text-rose-400 shrink-0 mb-0.5" title="Record voice message">
         <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
       </button>
 
-      <input id="msg-input" type="text" placeholder="Type a message..." autocomplete="off" class="min-w-0 flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 sm:px-4 py-2 text-xs sm:text-sm focus:outline-none focus:border-indigo-500 text-slate-100 placeholder-slate-500">
+      <!-- Auto-expanding Textarea -->
+      <textarea id="msg-input" rows="1" placeholder="Type a message..." class="min-w-0 flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 sm:px-4 py-2 text-xs sm:text-sm focus:outline-none focus:border-indigo-500 text-slate-100 placeholder-slate-500 resize-none max-h-28 overflow-y-auto leading-relaxed" oninput="autoGrowInput(this)" onkeydown="handleEnterKey(event)"></textarea>
       
-      <button type="submit" id="send-btn" class="bg-indigo-600 hover:bg-indigo-500 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition shrink-0 shadow-md shadow-indigo-600/20 active:scale-95 flex items-center justify-center gap-1">
+      <button type="submit" id="send-btn" class="bg-indigo-600 hover:bg-indigo-500 px-3 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition shrink-0 shadow-md shadow-indigo-600/20 active:scale-95 flex items-center justify-center gap-1 mb-0.5">
         <span id="send-text">Send</span>
         <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 rotate-45 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
         <span id="send-spinner" class="hidden animate-spin h-3.5 w-3.5 border-2 border-white border-t-transparent rounded-full"></span>
@@ -131,7 +130,7 @@
     <div id="call-modal" class="absolute inset-0 bg-slate-950/95 z-50 hidden flex flex-col items-center justify-center p-4">
       <div id="incoming-call-box" class="hidden text-center space-y-4">
         <div class="w-16 h-16 rounded-full bg-indigo-600/20 border border-indigo-500 text-indigo-400 mx-auto flex items-center justify-center animate-bounce">
-          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a11.042 11.042 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
         </div>
         <div>
           <h3 id="incoming-caller-title" class="text-lg font-bold text-white">Incoming Call...</h3>
@@ -160,15 +159,12 @@
           </div>
         </div>
 
-        <!-- Controls: Speaker Toggle & End Call -->
         <div class="pb-4 flex items-center gap-4">
-          <!-- Speaker Output Toggle Button -->
           <button id="speaker-toggle-btn" onclick="toggleSpeakerOutput()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-4 py-2.5 rounded-xl text-xs font-semibold shadow transition flex items-center gap-2">
             <span id="speaker-icon">🔊</span>
             <span id="speaker-label">Speaker: ON</span>
           </button>
 
-          <!-- End Call Button -->
           <button onclick="endCall()" class="bg-rose-600 hover:bg-rose-500 text-white px-5 py-2.5 rounded-xl text-xs font-semibold shadow-lg shadow-rose-600/30 transition flex items-center gap-1.5">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M5 3a2 2 0 00-2 2v1c0 8.284 6.716 15 15 15h1a2 2 0 002-2v-3.28a1 1 0 00-.684-.948l-4.493-1.498a1 1 0 00-1.21.502l-1.13 2.257a11.042 11.042 0 01-5.516-5.517l2.257-1.128a1 1 0 00.502-1.21L9.228 3.683A1 1 0 008.279 3H5z"></path></svg>
             End Call
@@ -184,7 +180,7 @@
     const USER1_PASSWORD = "CD&852"; // User 1
     const USER2_PASSWORD = "GF$987"; // User 2
     const ENCRYPTION_SECRET = "SilentRoom_SecretKey_2026_SecureAES";
-    const MESSAGE_EXPIRE_HOURS = 4;
+    const MESSAGE_EXPIRE_HOURS = 3;
 
     const firebaseConfig = {
       apiKey: "AIzaSyDHq8YSDNWeyxRISG043Yj3DsO4rJXBqzc",
@@ -213,7 +209,6 @@
     let recordingSeconds = 0;
     let isRecordingCancelled = false;
 
-    // WebRTC & Audio Routing
     let peerConnection = null;
     let localStream = null;
     let callType = 'audio';
@@ -271,6 +266,20 @@
       location.reload();
     }
 
+    // Auto grow textarea as user types
+    function autoGrowInput(element) {
+      element.style.height = "auto";
+      element.style.height = (element.scrollHeight) + "px";
+    }
+
+    function handleEnterKey(event) {
+      // Send on desktop Enter key, but allow Shift+Enter for new line
+      if (event.key === 'Enter' && !event.shiftKey && window.innerWidth > 640) {
+        event.preventDefault();
+        sendMessage(event);
+      }
+    }
+
     // Presence & Last Seen System
     function setupPresence() {
       const myPresenceRef = db.collection('rooms').doc(FIXED_ROOM_ID).collection('presence').doc(currentUserRole);
@@ -310,7 +319,6 @@
         });
     }
 
-    // High quality audio constraint for call mode
     function getAudioConstraints() {
       return {
         echoCancellation: true,
@@ -320,14 +328,12 @@
       };
     }
 
-    // Audio Output Toggle (Speaker vs Earpiece)
     async function toggleSpeakerOutput() {
       const remoteVideo = document.getElementById('remote-video');
       const icon = document.getElementById('speaker-icon');
       const label = document.getElementById('speaker-label');
 
       if (!('setSinkId' in HTMLMediaElement.prototype)) {
-        // Fallback for devices without setSinkId: Reduce volume slightly to protect ear
         if (isLoudSpeaker) {
           remoteVideo.volume = 0.25;
           isLoudSpeaker = false;
@@ -347,7 +353,6 @@
         const audioOutputs = devices.filter(device => device.kind === 'audiooutput');
 
         if (isLoudSpeaker) {
-          // Switch to non-default or earpiece device if available
           let earpieceDevice = audioOutputs.find(d => d.label.toLowerCase().includes('earpiece') || d.label.toLowerCase().includes('receiver') || d.deviceId !== 'default');
           if (earpieceDevice) {
             await remoteVideo.setSinkId(earpieceDevice.deviceId);
@@ -358,7 +363,6 @@
           icon.innerText = '🔈';
           label.innerText = 'Earpiece / Low';
         } else {
-          // Switch to default/loudspeaker
           await remoteVideo.setSinkId('default');
           remoteVideo.volume = 1.0;
           isLoudSpeaker = true;
@@ -373,7 +377,6 @@
       }
     }
 
-    // Peer-to-Peer Calling
     async function initiateCall(type) {
       if (!isPeerOnline) {
         alert(`${peerUserRole} is offline. Both users must be in the room to call.`);
@@ -778,7 +781,7 @@
               mediaHtml = `<div class="flex items-center gap-2 py-1"><audio controls class="h-9 w-52 sm:w-60"><source src="${decryptedMedia}" type="audio/webm"></audio></div>`;
             }
 
-            const textHtml = decryptedText ? `<div class="leading-relaxed">${escapeHtml(decryptedText)}</div>` : '';
+            const textHtml = decryptedText ? `<div class="leading-relaxed whitespace-pre-wrap">${escapeHtml(decryptedText)}</div>` : '';
 
             let statusIndicator = '';
             if (isMe) {
@@ -836,7 +839,7 @@
     }
 
     async function sendMessage(e) {
-      e.preventDefault();
+      if (e) e.preventDefault();
       if (isCompressing) return;
 
       const input = document.getElementById('msg-input');
@@ -848,6 +851,7 @@
 
       await sendDirectMessage({ text, mediaData, mediaType });
       input.value = '';
+      input.style.height = 'auto'; // Reset height
       clearMediaSelection();
     }
 
